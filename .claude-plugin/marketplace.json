@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "claude-code-plugins",
+  "name": "fin-code",
   "version": "1.0.0",
   "description": "Bundled plugins for Claude Code including Agent SDK development tools, PR review toolkit, and commit workflows",
   "owner": {

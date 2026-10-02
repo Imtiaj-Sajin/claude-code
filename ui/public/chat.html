@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fin-code Chat</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23b85c38'/%3E%3Cpath d='M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/chat.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <button id="toggle-sidebar" class="quiet menu" type="button" aria-label="Show chats" aria-controls="sidebar" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <a class="brand" href="/">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+        <rect width="24" height="24" rx="6" fill="var(--accent)"/>
+        <path d="M7.5 7h3.5v3.5H7.5zM13 7h3.5v3.5H13zM7.5 12.5h3.5V16H7.5zM13 12.5h3.5V16H13z" fill="var(--accent-text)"/>
+      </svg>
+      fin-code
+    </a>
+    <nav class="nav" aria-label="Pages">
+      <a href="/" aria-current="page">Chat</a>
+      <a href="/addons">Add-ons</a>
+    </nav>
+    <div class="top-slot"><span id="plan" class="plan-badge" hidden></span></div>
+  </div>
+</header>
+
+<div class="app">
+  <aside id="sidebar" class="sidebar" aria-label="Chats">
+    <button id="new-chat" class="primary new-chat" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      New chat
+    </button>
+
+    <form id="folder-form" class="folder">
+      <label for="folder">Project folder</label>
+      <div class="folder-row">
+        <input id="folder" spellcheck="false" autocomplete="off" placeholder="C:\path\to\project">
+        <button class="ghost" type="submit">Open</button>
+      </div>
+      <p id="folder-error" class="field-error" hidden></p>
+    </form>
+
+    <nav class="mobile-nav" aria-label="Pages"><a href="/addons">Add-ons page →</a></nav>
+
+    <h2 class="side-head">Recent chats</h2>
+    <ul id="sessions" class="sessions"><li class="side-empty">Loading…</li></ul>
+  </aside>
+  <div id="scrim" class="scrim" hidden></div>
+
+  <main class="conversation">
+    <div id="banner" class="banner" hidden></div>
+    <div id="scroller" class="scroller">
+      <div id="messages" class="messages" aria-live="polite"></div>
+    </div>
+
+    <div class="dock">
+      <div id="todos" class="todos" hidden></div>
+      <form id="composer" class="composer">
+        <div id="suggest" class="suggest" role="listbox" aria-label="Suggestions" hidden></div>
+        <div id="attachments" class="attachments" hidden></div>
+        <textarea id="input" rows="1" placeholder="Ask Claude to do something…   / for commands, @ for files" aria-label="Message"></textarea>
+        <div class="bar">
+          <button id="attach" class="quiet icon" type="button" title="Attach images" aria-label="Attach images">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 01-7.8-7.8l8.6-8.6a3.7 3.7 0 015.2 5.2l-8.6 8.6a1.8 1.8 0 01-2.6-2.6l7.9-7.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <input id="file" type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
+          <select id="mode" aria-label="When Claude asks first">
+            <option value="default">Ask before edits</option>
+            <option value="acceptEdits">Edit automatically</option>
+            <option value="plan">Plan mode</option>
+          </select>
+          <select id="model" aria-label="Model"></select>
+          <select id="effort" aria-label="Effort" hidden></select>
+          <span class="grow"></span>
+          <span id="status" class="status" aria-live="polite"></span>
+          <button id="send" class="primary send" type="submit">Send</button>
+        </div>
+      </form>
+      <p class="hint">Claude can change files and run commands in this folder, so check what it asks. <kbd>Enter</kbd> sends, <kbd>Shift</kbd>+<kbd>Enter</kbd> adds a line, <kbd>Esc</kbd> stops.</p>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="/chat.js"></script>
+</body>
+</html>

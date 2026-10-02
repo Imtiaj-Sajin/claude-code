@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fin-code Add-ons</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23b85c38'/%3E%3Cpath d='M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/theme.css">
+<style>
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+  h1 { margin: 0; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; }
+  .sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+  main.wrap { padding-top: 28px; padding-bottom: 48px; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+
+  .setup { border-color: var(--accent); background: var(--accent-soft); }
+  .setup h2 { margin: 0 0 4px; font-size: 17px; }
+  .setup p { margin: 0 0 14px; color: var(--text); }
+
+  .banner { border-color: var(--danger); background: var(--danger-soft); color: var(--text); }
+  .banner pre { margin: 8px 0 0; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 0; padding: 0; list-style: none; }
+  .steps li { display: flex; gap: 12px; align-items: flex-start; }
+  .steps .n {
+    flex: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 700; font-size: 14px;
+  }
+  .steps b { display: block; }
+  .steps span.t { color: var(--muted); font-size: 14px; }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 28px 0 8px;
+  }
+
+  .tabs {
+    display: inline-flex;
+    background: var(--surface-2);
+    border-radius: 11px;
+    padding: 3px;
+  }
+
+  .tabs button { background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 8px; }
+  .tabs button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+  .search {
+    flex: 1 1 220px;
+    max-width: 320px;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+
+  .group h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 28px 0 12px;
+    font-weight: 650;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+  }
+
+  .card.is-on { border-color: color-mix(in srgb, var(--ok) 45%, var(--border)); }
+
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .card h3 { margin: 0; font-size: 17px; line-height: 1.3; }
+  .tech { color: var(--muted); font-size: 13px; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+  .summary { margin: 0; }
+
+  .pill {
+    flex: none;
+    font-size: 12px;
+    font-weight: 650;
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .pill.on { background: var(--ok-soft); color: var(--ok); }
+  .pill.off { background: var(--surface-2); color: var(--muted); }
+
+  .try { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+
+  code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px; }
+  .try code {
+    background: var(--surface-2);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 3px 8px;
+    overflow-wrap: anywhere;
+  }
+
+  .copy { padding: 3px 9px; font-size: 13px; font-weight: 500; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-size: 13px; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.ok { background: var(--ok); }
+  .dot.warn { background: var(--warn); }
+  .dot.danger { background: var(--danger); }
+
+  .notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; color: var(--muted); }
+  .notes li { padding-left: 14px; position: relative; }
+  .notes li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 5px; height: 5px; border-radius: 50%; background: var(--border); }
+  .notes li.warn { color: var(--warn); background: var(--warn-soft); border-radius: 8px; padding: 8px 10px; }
+  .notes li.warn::before { display: none; }
+
+  details { font-size: 14px; }
+  summary { cursor: pointer; color: var(--muted); font-weight: 550; width: fit-content; border-radius: 6px; }
+  summary:hover { color: var(--text); }
+  .inside { margin-top: 10px; display: grid; gap: 12px; }
+  .inside h4 { margin: 0 0 4px; font-size: 13px; color: var(--muted); font-weight: 650; }
+  .inside ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  .inside p { margin: 0; }
+  .inside .hint { color: var(--muted); }
+
+  .actions { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 4px; flex-wrap: wrap; }
+  .actions .primary { min-width: 110px; }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: none;
+    padding: 4px 2px;
+    color: var(--text);
+  }
+  .switch .track {
+    width: 40px; height: 24px;
+    border-radius: 999px;
+    background: var(--border);
+    position: relative;
+    transition: background 0.15s;
+  }
+  .switch .track::after {
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+    transition: transform 0.15s;
+  }
+  .switch[aria-checked="true"] .track { background: var(--ok); }
+  .switch[aria-checked="true"] .track::after { transform: translateX(16px); }
+  .actions .spacer { flex: 1; }
+
+  .locked-hint { font-size: 13px; color: var(--muted); }
+
+  .loading, .empty { color: var(--muted); padding: 40px 0; text-align: center; }
+
+
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    width: min(560px, calc(100vw - 32px));
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--ok);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
+    padding: 14px 16px;
+    z-index: 10;
+  }
+  #toast.show { display: block; }
+  #toast.danger { border-left-color: var(--danger); }
+  #toast .row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  #toast .close { padding: 0 6px; background: transparent; color: var(--muted); font-size: 18px; line-height: 1; }
+  #toast pre, .banner pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-height: 180px;
+    overflow: auto;
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin: 10px 0 0;
+  }
+
+  footer.wrap { color: var(--muted); font-size: 13px; padding-bottom: 40px; }
+  footer code { overflow-wrap: anywhere; }
+
+  @media (max-width: 760px) {
+    .wrap { padding: 0 16px; }
+    .steps { grid-template-columns: 1fr; gap: 12px; }
+    .grid { grid-template-columns: 1fr; }
+    .search { max-width: none; }
+    .page-head { flex-wrap: wrap; align-items: flex-start; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="/">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+        <rect width="24" height="24" rx="6" fill="var(--accent)"/>
+        <path d="M7.5 7h3.5v3.5H7.5zM13 7h3.5v3.5H13zM7.5 12.5h3.5V16H7.5zM13 12.5h3.5V16H13z" fill="var(--accent-text)"/>
+      </svg>
+      fin-code
+    </a>
+    <nav class="nav" aria-label="Pages">
+      <a href="/">Chat</a>
+      <a href="/addons" aria-current="page">Add-ons</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Add-ons</h1>
+      <p class="sub">Extra commands and helpers for Claude Code, from this folder</p>
+    </div>
+    <button id="reload" class="ghost" type="button">Refresh</button>
+  </div>
+  <div id="banner"></div>
+  <div id="setup"></div>
+
+  <section class="panel" aria-label="How to use an add-on">
+    <ol class="steps">
+      <li><span class="n">1</span><div><b>Install one below</b><span class="t">Nothing else to download or pay for.</span></div></li>
+      <li><span class="n">2</span><div><b>Start a new chat</b><span class="t">On the <a href="/">Chat</a> page or in VS Code. Add-ons load when a chat starts.</span></div></li>
+      <li><span class="n">3</span><div><b>Type its command</b><span class="t">The card shows what to type, like <code>/commit</code>.</span></div></li>
+    </ol>
+  </section>
+
+  <div class="toolbar">
+    <div class="tabs" role="group" aria-label="Show">
+      <button type="button" data-view="all">All</button>
+      <button type="button" data-view="installed">Installed</button>
+      <button type="button" data-view="available">Not installed</button>
+    </div>
+    <input id="search" class="search" type="search" placeholder="Search add-ons" aria-label="Search add-ons">
+  </div>
+
+  <div id="list"><p class="loading"><span class="spinner"></span>Loading add-ons… this can take a few seconds.</p></div>
+</main>
+
+<footer class="wrap" id="footer"></footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const COST = {
+    normal: ['Normal usage', 'ok'],
+    more: ['Uses more of your usage', 'warn'],
+    lots: ['Uses a lot of your usage', 'danger'],
+  }
+
+  const HOOK_WORDS = {
+    SessionStart: 'when a chat starts',
+    SessionEnd: 'when a chat ends',
+    UserPromptSubmit: 'when you send a message',
+    PreToolUse: 'before Claude uses a tool',
+    PostToolUse: 'after Claude uses a tool',
+    Stop: 'when Claude finishes a reply',
+    SubagentStop: 'when a helper finishes',
+    Notification: 'when Claude sends a notice',
+    PreCompact: 'before a long chat is shortened',
+  }
+
+  const TOOL_NAMES = { gh: 'the GitHub CLI (gh)', python3: 'python3', git: 'git' }
+
+  const BUSY_WORDS = {
+    connect: 'Connecting…',
+    install: 'Installing…',
+    uninstall: 'Removing…',
+    enable: 'Turning on…',
+    disable: 'Turning off…',
+  }
+
+  let state = null
+  let busy = null
+  let view = remember('view') ?? 'all'
+  let query = ''
+  let toastTimer = null
+
+  function remember(key, value) {
+    try {
+      if (value === undefined) return localStorage.getItem(`addon-manager.${key}`)
+      localStorage.setItem(`addon-manager.${key}`, value)
+    } catch {}
+    return null
+  }
+
+  function esc(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+  }
+
+  function titleOf(name) {
+    return state?.plugins.find(p => p.name === name)?.title ?? name
+  }
+
+  async function load() {
+    const reload = document.getElementById('reload')
+    reload.disabled = true
+    reload.innerHTML = '<span class="spinner"></span>Refreshing'
+    try {
+      const res = await fetch('/api/addons/state')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Could not load the add-ons.')
+      state = data
+      render()
+    } catch (error) {
+      document.getElementById('list').innerHTML =
+        `<div class="panel banner"><b>Couldn't load the add-ons.</b><pre>${esc(error.message)}</pre></div>`
+    } finally {
+      reload.disabled = false
+      reload.textContent = 'Refresh'
+    }
+  }
+
+  async function act(action, name) {
+    busy = { action, name }
+    render()
+    try {
+      const res = await fetch('/api/addons/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Addon-Manager': '1' },
+        body: JSON.stringify({ action, name }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'The request was refused.')
+      state = data.state
+      if (data.ok) toast(doneText(action, name), 'ok')
+      else toast(failText(action, name), 'danger', data.message)
+    } catch (error) {
+      toast('Something went wrong.', 'danger', error.message)
+    } finally {
+      busy = null
+      render()
+    }
+  }
+
+  function doneText(action, name) {
+    const title = titleOf(name)
+    return {
+      connect: 'Folder connected. You can install add-ons now.',
+      install: `Installed ${title}. Start a new Claude chat to use it.`,
+      uninstall: `Removed ${title}.`,
+      enable: `${title} is on. New chats will use it.`,
+      disable: `${title} is off. New chats won't use it.`,
+    }[action]
+  }
+
+  function failText(action, name) {
+    const title = titleOf(name)
+    return {
+      connect: "Couldn't connect this folder.",
+      install: `Couldn't install ${title}.`,
+      uninstall: `Couldn't remove ${title}.`,
+      enable: `Couldn't turn on ${title}.`,
+      disable: `Couldn't turn off ${title}.`,
+    }[action]
+  }
+
+  function toast(text, tone, detail) {
+    const el = document.getElementById('toast')
+    el.className = `show ${tone}`
+    el.innerHTML =
+      `<div class="row"><b>${esc(text)}</b><button class="close" type="button" aria-label="Close">×</button></div>` +
+      (detail ? `<pre>${esc(detail)}</pre>` : '')
+    el.querySelector('.close').onclick = () => (el.className = '')
+    clearTimeout(toastTimer)
+    if (tone === 'ok') toastTimer = setTimeout(() => (el.className = ''), 6000)
+  }
+
+  function matches(p) {
+    if (view === 'installed' && !p.isInstalled) return false
+    if (view === 'available' && p.isInstalled) return false
+    if (!query) return true
+    const haystack = [p.title, p.name, p.summary, p.description, ...p.commands.map(c => c.name)].join(' ').toLowerCase()
+    return haystack.includes(query)
+  }
+
+  function render() {
+    if (!state) return
+
+    document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === view)))
+
+    document.getElementById('banner').innerHTML = state.error
+      ? `<div class="panel banner"><b>Couldn't read which add-ons you have installed.</b><pre>${esc(state.error)}</pre></div>`
+      : ''
+
+    document.getElementById('setup').innerHTML = state.isConnected ? '' : `
+      <section class="panel setup">
+        <h2>One-time setup</h2>
+        <p>Connect this folder so Claude Code can see its add-ons. This adds it to Claude Code's list of add-on sources, under the name <code>${esc(state.marketplace)}</code>.</p>
+        <button class="primary" type="button" data-action="connect" ${busy ? 'disabled' : ''}>
+          ${busy?.action === 'connect' ? `<span class="spinner"></span>${BUSY_WORDS.connect}` : 'Connect this folder'}
+        </button>
+      </section>`
+
+    const shown = state.plugins.filter(matches)
+    const html = state.groups.map(group => {
+      const plugins = shown.filter(p => p.group === group.id)
+      if (!plugins.length) return ''
+      return `<section class="group"><h2>${esc(group.title)}</h2><div class="grid">${plugins.map(card).join('')}</div></section>`
+    }).join('')
+
+    document.getElementById('list').innerHTML = html || `<p class="empty">${
+      view === 'installed' && !query ? 'Nothing installed yet. Pick one from All.' : 'No add-ons match.'
+    }</p>`
+
+    const installed = state.plugins.filter(p => p.isInstalled).length
+    document.getElementById('footer').innerHTML =
+      `${installed} of ${state.plugins.length} installed · Runs only on this computer · Folder: <code>${esc(state.folder)}</code>`
+  }
+
+  function card(p) {
+    const [costLabel, costTone] = COST[p.cost] ?? COST.normal
+    const isBusy = busy?.name === p.name
+    const isLocked = busy !== null || !state.isConnected
+    const missing = p.needs.filter(n => n.isFound === false)
+
+    const pill = p.isInstalled
+      ? `<span class="pill ${p.isEnabled ? 'on' : 'off'}">${p.isEnabled ? 'On' : 'Off'}</span>`
+      : ''
+
+    const tryIt = p.tryIt
+      ? `<div class="try">Type in a new chat: <code>${esc(p.tryIt)}</code>
+           <button class="ghost copy" type="button" data-copy="${esc(p.tryIt)}">Copy</button></div>`
+      : ''
+
+    const notes = [
+      ...missing.map(n => `<li class="warn">Needs ${esc(TOOL_NAMES[n.tool] ?? n.tool)} ${esc(n.why)}, and it isn't on this computer.</li>`),
+      ...p.notes.map(n => `<li>${esc(n)}</li>`),
+    ]
+
+    let actions
+    if (!p.isInstalled) {
+      actions = `<button class="primary" type="button" data-action="install" data-name="${esc(p.name)}" ${isLocked ? 'disabled' : ''}>
+          ${isBusy ? `<span class="spinner"></span>${BUSY_WORDS[busy.action]}` : 'Install'}
+        </button>
+        ${state.isConnected ? '' : '<span class="locked-hint">Connect the folder first</span>'}`
+    } else {
+      const next = p.isEnabled ? 'disable' : 'enable'
+      actions = `<button class="switch" type="button" role="switch" aria-checked="${p.isEnabled}" data-action="${next}" data-name="${esc(p.name)}" ${isLocked ? 'disabled' : ''}>
+          <span class="track"></span>${isBusy && busy.action !== 'uninstall' ? `<span class="spinner"></span>${BUSY_WORDS[busy.action]}` : (p.isEnabled ? 'On' : 'Off')}
+        </button>
+        <span class="spacer"></span>
+        <button class="ghost danger" type="button" data-action="uninstall" data-name="${esc(p.name)}" ${isLocked ? 'disabled' : ''}>
+          ${isBusy && busy.action === 'uninstall' ? `<span class="spinner"></span>${BUSY_WORDS.uninstall}` : 'Remove'}
+        </button>`
+    }
+
+    return `
+      <article class="card ${p.isInstalled && p.isEnabled ? 'is-on' : ''}">
+        <div class="card-head">
+          <div>
+            <h3>${esc(p.title)}</h3>
+            <div class="tech">${esc(p.name)}${p.version ? ` · v${esc(p.version)}` : ''}</div>
+          </div>
+          ${pill}
+        </div>
+        <p class="summary">${esc(p.summary)}</p>
+        ${tryIt}
+        <div class="meta"><span class="tag"><span class="dot ${costTone}"></span>${costLabel}</span></div>
+        ${notes.length ? `<ul class="notes">${notes.join('')}</ul>` : ''}
+        ${inside(p)}
+        <div class="actions">${actions}</div>
+      </article>`
+  }
+
+  function inside(p) {
+    const parts = []
+
+    if (p.commands.length) {
+      parts.push(`<div><h4>Commands you can type</h4><ul>${p.commands.map(c =>
+        `<li><code>/${esc(c.name)}${c.argumentHint ? ' ' + esc(c.argumentHint) : ''}</code> <span class="hint">${esc(c.description)}</span></li>`
+      ).join('')}</ul></div>`)
+    }
+
+    if (p.agents.length) {
+      parts.push(`<div><h4>Helpers Claude can send out</h4><ul>${p.agents.map(a =>
+        `<li><code>${esc(a.name)}</code></li>`
+      ).join('')}</ul></div>`)
+    }
+
+    if (p.skills.length) {
+      parts.push(`<div><h4>Know-how Claude picks up</h4><ul>${p.skills.map(s =>
+        `<li><code>${esc(s.name)}</code></li>`
+      ).join('')}</ul></div>`)
+    }
+
+    if (p.hookEvents.length) {
+      const when = p.hookEvents.map(e => HOOK_WORDS[e] ?? e)
+      parts.push(`<div><h4>Runs automatically</h4><p>${esc(when.join(', '))}</p></div>`)
+    }
+
+    parts.push(`<div><h4>Original description</h4><p class="hint">${esc(p.description)}${p.author ? ` · By ${esc(p.author)}` : ''}</p></div>`)
+
+    return `<details><summary>What's inside</summary><div class="inside">${parts.join('')}</div></details>`
+  }
+
+  document.addEventListener('click', async event => {
+    const copy = event.target.closest('[data-copy]')
+    if (copy) {
+      try {
+        await navigator.clipboard.writeText(copy.dataset.copy)
+        copy.textContent = 'Copied'
+        setTimeout(() => (copy.textContent = 'Copy'), 1500)
+      } catch {
+        toast("Couldn't copy. Select the text and copy it yourself.", 'danger')
+      }
+      return
+    }
+
+    const button = event.target.closest('[data-action]')
+    if (button && !button.disabled) {
+      const { action, name } = button.dataset
+      if (action === 'uninstall' && !confirm(`Remove ${titleOf(name)}? You can install it again any time.`)) return
+      act(action, name)
+      return
+    }
+
+    const tab = event.target.closest('[data-view]')
+    if (tab) {
+      view = tab.dataset.view
+      remember('view', view)
+      render()
+    }
+  })
+
+  document.getElementById('search').addEventListener('input', event => {
+    query = event.target.value.trim().toLowerCase()
+    render()
+  })
+
+  document.getElementById('reload').addEventListener('click', load)
+
+  load()
+</script>
+</body>
+</html>
